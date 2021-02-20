@@ -481,22 +481,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 284181538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbb3221551cdc1642829e180401c6adb, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  chaseRange: 50
-  FOV: 45
-  viewDistance: 100
-  playerTransforms:
-  - {fileID: 582745795}
-  patrolLocs:
-  - {fileID: 1613988759}
-  - {fileID: 378408384}
-  - {fileID: 1597031236}
-  - {fileID: 589645079}
-  - {fileID: 1823247731}
-  - {fileID: 1081412089}
-  - {fileID: 583211812}
 --- !u!195 &284181540
 NavMeshAgent:
   m_ObjectHideFlags: 0
