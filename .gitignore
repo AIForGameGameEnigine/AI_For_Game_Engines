@@ -58,3 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+*.log
+*.bin
+*.log
+*.log
+Name_TBD/Library/shadercompiler-UnityShaderCompiler.exe0.log
