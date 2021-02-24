@@ -5,11 +5,11 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private float chaseRange;
-    [SerializeField] private int FOV;
-    [SerializeField] private int viewDistance;
-    [SerializeField] private Transform[] playerTransforms;
-    [SerializeField] private Transform[] patrolLocs;
+    public float detectionRange;
+
+    public GameObject[] towers;
+    public List<GameObject> champs;
+    public List<GameObject> minions;
 
     private NavMeshAgent agent;
     private Selector topNode;
@@ -22,27 +22,58 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        ConstructBehaviourTree();
+        champs = new List<GameObject>();
+        minions = new List<GameObject>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
+        GetAllInRange();
+        ConstructBehaviourTree();
         topNode.Evaluate();
+    }
+
+    void GetAllInRange()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRange);
+        foreach (var hitCollider in hitColliders)
+        {
+            Role role = hitCollider.gameObject.GetComponent<Role>();
+            if(role != null)
+            {
+                if (role.teamType != GetComponent<Role>().teamType)
+                {
+                    switch (role.roleType)
+                    {
+                        case Role.RoleType.Champion:
+                            if(champs.IndexOf(hitCollider.gameObject) < 0)
+                                champs.Add(hitCollider.gameObject);
+                            break;
+                        case Role.RoleType.Minion:
+                            if (minions.IndexOf(hitCollider.gameObject) < 0)
+                                minions.Add(hitCollider.gameObject);
+                            break;
+                    }
+                }
+            }
+           
+        }
     }
 
     private void ConstructBehaviourTree()
     {
-        InRangeNode inRange = new InRangeNode(chaseRange, playerTransforms, transform);
-        IsVisibleNode isVisible = new IsVisibleNode(FOV, viewDistance, playerTransforms, transform);
-        WonderNode wonderNode = new WonderNode(patrolLocs, agent);
-        ChaseNode chaseNode = new ChaseNode(playerTransforms, agent);
+        InRangeNode minionsInRange = new InRangeNode(detectionRange, minions.ToArray(), transform);
+        InRangeNode champsInRange = new InRangeNode(detectionRange, champs.ToArray(), transform);
+        InRangeNode towersInRange = new InRangeNode(detectionRange, towers, transform);
+        AttackTartgetNode attackMinions = new AttackTartgetNode(minions.ToArray(), gameObject);
+        AttackTartgetNode attackChamps = new AttackTartgetNode(champs.ToArray(), gameObject);
+        Inverter towerInRangeInverter = new Inverter(towersInRange);
+        GotoTower gotoTower = new GotoTower(towers, gameObject);
 
-       
-        Sequence noEnemySequence = new Sequence(new List<Node> { inRange, isVisible});
-        Inverter noEnemyInverter = new Inverter(noEnemySequence);
-        Sequence chaseSequence = new Sequence(new List<Node> { inRange, isVisible, chaseNode });
-        Sequence wonderSequence = new Sequence(new List<Node> { noEnemyInverter, wonderNode});
+        Sequence attackMinionSeg = new Sequence(new List<Node> { minionsInRange, towerInRangeInverter, attackMinions});
+        Sequence attackChampSeg = new Sequence(new List<Node> { champsInRange, attackChamps});
+        Sequence goToTowerSeg = new Sequence(new List<Node> {gotoTower});
 
-        topNode = new Selector(new List<Node> { wonderSequence, chaseSequence });
+        topNode = new Selector(new List<Node> {attackMinionSeg, attackChampSeg, goToTowerSeg});
     }
 }

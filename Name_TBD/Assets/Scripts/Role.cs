@@ -19,6 +19,8 @@ public class Role : MonoBehaviour
         Tower
     }
 
+    public RoleType roleType;
+
     public enum LaneType
     {
         Top,
