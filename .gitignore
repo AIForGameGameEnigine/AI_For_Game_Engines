@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
+/Name_TBD/Library/
+/Name_TBD/Temp/
+/Name_TBD/Obj/
+/Name_TBD/Build/
+/Name_TBD/Builds/
+/Name_TBD/Logs/
+/Name_TBD/MemoryCaptures/
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
